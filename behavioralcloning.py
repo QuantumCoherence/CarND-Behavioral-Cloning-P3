@@ -11,7 +11,7 @@ from keras.layers.pooling import MaxPooling2D
 
 samples = []
 bad_record_count = 0
-with open('data/log.csv') as csvfile:
+with open('data/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         samples.append(line)
@@ -66,19 +66,25 @@ def generator(samples, batch_size=32):
 
         
 # compile and train the model using the generator function
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+train_generator = generator(train_samples, batch_size=128)
+validation_generator = generator(validation_samples, batch_size=128)
 
 ch, row, col = 3, 160, 320  # Trimmed image format
     
 model = Sequential()
-model.add(Lambda(lambda x: x/255.0 - 0.5,input_shape=(row, col, ch)))
-model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(3,160,320)))
+model.add(Lambda(lambda x: 0.01 + ((x-0.01)*0.98/255.0),input_shape=(row, col, ch)))
+model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(160,320, 3)))
+model.add(Dropout(0.2))
 model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
+model.add(Dropout(0.2))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
+model.add(Dropout(0.2))
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"))
+model.add(Dropout(0.2))
 model.add(Convolution2D(64,3,3,activation="relu"))
+model.add(Dropout(0.2))
 model.add(Convolution2D(64,3,3,activation="relu"))
+model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dense(100))
 model.add(Dense(50))
@@ -90,12 +96,12 @@ model.save('driver_model.h5')
 
 history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), 
                     validation_data = validation_generator, nb_val_samples = len(validation_samples),
-                    nb_epoch=5, verbose=1)
+                    nb_epoch=9, verbose=1)
 
 
 ### print the keys contained in the history object
 print(history_object.history.keys())
-print(bad_record_count)
+print("Found " , bad_record_count, " bad records ")
 ### plot the training and validation loss for each epoch
 plt.plot(history_object.history['loss'])
 plt.plot(history_object.history['val_loss'])
