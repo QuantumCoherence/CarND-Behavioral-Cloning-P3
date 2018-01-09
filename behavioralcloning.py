@@ -8,6 +8,7 @@ from keras.layers import Flatten, Dense, Lambda
 from keras.layers import Cropping2D
 from keras.layers import Convolution2D
 from keras.layers.pooling import MaxPooling2D
+from keras.layers import Dropout
 
 samples = []
 bad_record_count = 0
