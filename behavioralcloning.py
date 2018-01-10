@@ -31,7 +31,7 @@ def generator(samples, batch_size=32):
                 try:
                     steering_center = float(batch_sample[3])
                     # create adjusted steering measurements for the side camera images
-                    correction = 2.5 #
+                    correction =0.2#
                     steering_left = steering_center + correction
                     steering_right = steering_center - correction
 
@@ -46,18 +46,18 @@ def generator(samples, batch_size=32):
                     # steering_center, steering_left, steering_right
                     images.append(img_center)
                     angles.append(steering_center)
-                    images.append(cv2.flip(img_center, 1))
-                    angles.append(steering_center*-1.0)                
+                    #images.append(cv2.flip(img_center, 1))
+                    #angles.append(steering_center*-1.0)                
 
                     images.append(img_left)
                     angles.append(steering_left)
-                    images.append(cv2.flip(img_left, 1))
-                    angles.append(steering_left*-1.0)                
+                    #images.append(cv2.flip(img_left, 1))
+                    #angles.append(steering_left*-1.0)                
 
                     images.append(img_right)
                     angles.append(steering_right)
-                    images.append(cv2.flip(img_right, 1))
-                    angles.append(steering_right*-1.0)
+                    #images.append(cv2.flip(img_right, 1))
+                    #angles.append(steering_right*-1.0)
                 except:
                     bad_record_count =+ 1
 
@@ -67,13 +67,13 @@ def generator(samples, batch_size=32):
 
         
 # compile and train the model using the generator function
-train_generator = generator(train_samples, batch_size=128)
-validation_generator = generator(validation_samples, batch_size=128)
+train_generator = generator(train_samples, batch_size=88)
+validation_generator = generator(validation_samples, batch_size=88)
 
 ch, row, col = 3, 160, 320  # Trimmed image format
-    
+print(
 model = Sequential()
-model.add(Lambda(lambda x: 0.01 + ((x-0.01)*0.98/255.0),input_shape=(row, col, ch)))
+model.add(Lambda(lambda x: x/255.0 -0.5),input_shape=(row, col, ch)))
 model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(160,320, 3)))
 model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
@@ -94,7 +94,7 @@ model.save('driver_model.h5')
 
 history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), 
                     validation_data = validation_generator, nb_val_samples = len(validation_samples),
-                    nb_epoch=9, verbose=1)
+                    nb_epoch=19, verbose=1)
 
 
 ### print the keys contained in the history object
