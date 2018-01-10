@@ -31,7 +31,7 @@ def generator(samples, batch_size=32):
                 try:
                     steering_center = float(batch_sample[3])
                     # create adjusted steering measurements for the side camera images
-                    correction = 0.2 # this is a parameter to tune
+                    correction = 1.0 #
                     steering_left = steering_center + correction
                     steering_right = steering_center - correction
 
@@ -77,19 +77,22 @@ model.add(Lambda(lambda x: 0.01 + ((x-0.01)*0.98/255.0),input_shape=(row, col, c
 model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(160,320, 3)))
 model.add(Dropout(0.2))
 model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
-model.add(Dropout(0.2))
+model.add(Dropout(0.3))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
-model.add(Dropout(0.2))
+model.add(Dropout(0.4))
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"))
-model.add(Dropout(0.2))
+model.add(Dropout(0.4))
 model.add(Convolution2D(64,3,3,activation="relu"))
-model.add(Dropout(0.2))
+model.add(Dropout(0.4))
 model.add(Convolution2D(76,3,3,activation="relu"))
-model.add(Dropout(0.2))
+model.add(Dropout(0.4))
 model.add(Flatten())
 model.add(Dense(120))
+model.add(Dropout(0.4))
 model.add(Dense(60))
+model.add(Dropout(0.4))
 model.add(Dense(20))
+model.add(Dropout(0.4))
 model.add(Dense(10))
 model.add(Dense(1))
 
