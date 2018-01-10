@@ -9,7 +9,7 @@ from keras.layers import Cropping2D
 from keras.layers import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers import Dropout
-
+from keras.optimizers import Adam
 samples = []
 bad_record_count = 0
 with open('driving_log.csv') as csvfile:
@@ -83,15 +83,15 @@ model.add(Convolution2D(64,3,3,activation="relu"))
 model.add(Convolution2D(64,3,3,activation="relu"))
 model.add(Flatten())
 model.add(Dropout(0.4))
-model.add(Dense(1124,activation="relu"()
+model.add(Dense(1124,activation="relu"))
 model.add(Dropout(0.4))
-model.add(Dense(100, activation=activation))
-model.add(Dense(50, activation=activation))
+model.add(Dense(100, activation="relu"))
+model.add(Dense(50, activation="relu"))
 model.add(Dense(1))
 
 optimizer = Adam(lr=0.001)
 model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'] )
-model.save('driver_model.h5')
+model.save('model.h5')
 
 history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), 
                     validation_data = validation_generator, nb_val_samples = len(validation_samples),
