@@ -12,7 +12,7 @@ from keras.layers import Dropout
 
 samples = []
 bad_record_count = 0
-with open('data/driving_log.csv') as csvfile:
+with open('driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         samples.append(line)
@@ -36,7 +36,7 @@ def generator(samples, batch_size=32):
                     steering_right = steering_center - correction
 
                     # read in images from center, left and right cameras
-                    path = "./data/"
+                    path = "./"
                     img_center = cv2.imread(path + batch_sample[0])
                     img_left = cv2.imread(path + batch_sample[1])
                     img_right = cv2.imread(path + batch_sample[2])
@@ -80,32 +80,32 @@ model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"))
 model.add(Convolution2D(64,3,3,activation="relu"))
+model.add(Convolution2D(64,3,3,activation="relu"))
 model.add(Flatten())
-model.add(Dense(1124))
 model.add(Dropout(0.4))
-model.add(Dense(120))
+model.add(Dense(1124,activation="relu"()
 model.add(Dropout(0.4))
-model.add(Dense(50))
-model.add(Dropout(0.4))
-model.add(Dense(10))
+model.add(Dense(100, activation=activation))
+model.add(Dense(50, activation=activation))
 model.add(Dense(1))
 
-model.compile(loss = 'mse', optimizer = 'adam')
+optimizer = Adam(lr=0.001)
+model.compile(loss = 'mse', optimizer = optimizer, metrics=['accuracy'] )
 model.save('driver_model.h5')
 
 history_object = model.fit_generator(train_generator, samples_per_epoch = len(train_samples), 
                     validation_data = validation_generator, nb_val_samples = len(validation_samples),
-                    nb_epoch=5, verbose=1)
+                    nb_epoch=3, verbose=1)
 
 
 ### print the keys contained in the history object
 print(history_object.history.keys())
 print("Found " , bad_record_count, " bad records ")
 ### plot the training and validation loss for each epoch
-plt.plot(history_object.history['loss'])
-plt.plot(history_object.history['val_loss'])
-plt.title('model mean squared error loss')
-plt.ylabel('mean squared error loss')
-plt.xlabel('epoch')
-plt.legend(['training set', 'validation set'], loc='upper right')
-plt.show()
+#plt.plot(history_object.history['loss'])
+#plt.plot(history_object.history['val_loss'])
+#plt.title('model mean squared error loss')
+#plt.ylabel('mean squared error loss')
+#plt.xlabel('epoch')
+#plt.legend(['training set', 'validation set'], loc='upper right')
+#plt.show()
