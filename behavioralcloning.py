@@ -12,7 +12,7 @@ from keras.layers import Dropout
 
 samples = []
 bad_record_count = 0
-with open('simdata/data/driving_log.csv') as csvfile:
+with open('data/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         samples.append(line)
@@ -36,7 +36,7 @@ def generator(samples, batch_size=32):
                     steering_right = steering_center - correction
 
                     # read in images from center, left and right cameras
-                    path = "./simdata/data/"
+                    path = "./data/"
                     img_center = cv2.imread(path + batch_sample[0])
                     img_left = cv2.imread(path + batch_sample[1])
                     img_right = cv2.imread(path + batch_sample[2])
@@ -77,11 +77,8 @@ model = Sequential()
 model.add(Lambda(lambda x: (x / 255.0) - 0.5,input_shape=(row, col, ch)))
 model.add(Cropping2D(cropping=((70,25), (0,0)), input_shape=(160,320, 3)))
 model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
-model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
-model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Convolution2D(48,5,5,subsample=(2,2),activation="relu"))
-model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Convolution2D(64,3,3,activation="relu"))
 model.add(Flatten())
 model.add(Dense(1124))
